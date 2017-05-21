@@ -26,7 +26,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     @IBOutlet weak var btnCompare: UIButton!
     var filterSelected = ""
-
+    var aCIImage = CIImage();
+    var contrastFilter: CIFilter!;
+    var brightnessFilter: CIFilter!;
+    var context = CIContext();
+    
     enum  HueLevel: UInt8 {
         case low = 0
         case medium = 128
@@ -40,6 +44,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let im = UIImage(named: "testing.jpg")
         setImageFilters(im!)
         btnCompare.enabled = false
+        let tapRecognizer = UILongPressGestureRecognizer(target:self, action: Selector("toggleImage:"))
+        //Add the recognizer to your view.
+        imageView.addGestureRecognizer(tapRecognizer)
+        
     }
 
     // MARK: Share
@@ -176,6 +184,69 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         imageView.image = sender.currentImage
         filterSelected = sender.currentTitle!
         btnCompare.enabled = true
+        let aUIImage = imageView.image;
+        let aCGImage = aUIImage?.CGImage;
+        aCIImage = CIImage(CGImage: aCGImage!)
+        context = CIContext(options: nil);
+        contrastFilter = CIFilter(name: "CIColorControls");
+        contrastFilter.setValue(aCIImage, forKey: "inputImage")
+        brightnessFilter = CIFilter(name: "CIColorControls");
+        brightnessFilter.setValue(aCIImage, forKey: "inputImage")
     }
     
+    func toggleImage(sender: UILongPressGestureRecognizer) {
+        //tappedImageView will be the image view that was tapped.
+        //dismiss it, animate it off screen, whatever.
+        //let tappedImageView = gestureRecognizer.view!
+        var currentImg = originalImage
+        if sender.state == .Ended{
+            UIView.animateWithDuration(0.8, animations: {
+                self.imageView.alpha = 0.1
+            })
+            if filterSelected == btnFilter1.currentTitle {
+                currentImg = btnFilter1.currentImage!
+            }
+            else if filterSelected == btnFilter2.currentTitle {
+                currentImg = btnFilter2.currentImage!
+            }
+            else if filterSelected == btnFilter3.currentTitle {
+                currentImg = btnFilter3.currentImage!
+            }
+            else if filterSelected == btnFilter4.currentTitle {
+                currentImg = btnFilter4.currentImage!
+            }
+            else if filterSelected == btnFilter5.currentTitle {
+                currentImg = btnFilter5.currentImage!
+            }
+            imageView.image  =  currentImg!
+            UIView.animateWithDuration(1, animations: {
+                self.imageView.alpha = 1
+            })
+        }
+        else if sender.state == .Began{
+            UIView.animateWithDuration(0.8, animations: {
+                self.imageView.alpha = 0.1
+            })
+            imageView.image  =  self.originalImage
+            UIView.animateWithDuration(1, animations: {
+                self.imageView.alpha = 1
+            })
+        }
+    }
+    
+    @IBAction func sliderContrastChanged(sender: UISlider) {
+        contrastFilter.setValue(NSNumber(float: sender.value), forKey: "inputContrast")
+        let outputImage = contrastFilter.outputImage;
+        let cgimg = context.createCGImage(outputImage!, fromRect: outputImage!.extent)
+        let newUIImage = UIImage(CGImage: cgimg)
+        imageView.image = newUIImage;
+    }
+    
+    @IBAction func sliderBrightnessChanged(sender: UISlider) {
+        brightnessFilter.setValue(NSNumber(float: sender.value), forKey: "inputBrightness");
+        let outputImage = brightnessFilter.outputImage;
+        let imageRef = context.createCGImage(outputImage!, fromRect: outputImage!.extent)
+        let newUIImage = UIImage(CGImage: imageRef)
+        imageView.image = newUIImage;
+    }
 }
