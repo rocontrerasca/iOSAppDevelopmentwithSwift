@@ -18,11 +18,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet var bottomMenu: UIView!
     
     @IBOutlet var filterButton: UIButton!
-    @IBOutlet weak var btnFilter2: UIButton!
-    @IBOutlet weak var btnFilter1: UIButton!
-    @IBOutlet weak var btnFilter3: UIButton!
-    @IBOutlet weak var btnFilter4: UIButton!
-    @IBOutlet weak var btnFilter5: UIButton!
     
     @IBOutlet weak var btnCompare: UIButton!
     var filterSelected = ""
@@ -30,6 +25,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     var contrastFilter: CIFilter!;
     var brightnessFilter: CIFilter!;
     var context = CIContext();
+    
+    @IBOutlet weak var scrollView: UIScrollView!
+    var filtersList = ["CIPhotoEffectChrome","CISepiaTone","CIPhotoEffectTransfer","CIPhotoEffectTonal","CIPhotoEffectProcess","CIPhotoEffectNoir", "CIPhotoEffectInstant","CIPhotoEffectFade"]
     
     enum  HueLevel: UInt8 {
         case low = 0
@@ -41,12 +39,20 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         super.viewDidLoad()
         secondaryMenu.backgroundColor = UIColor.whiteColor().colorWithAlphaComponent(0.5)
         secondaryMenu.translatesAutoresizingMaskIntoConstraints = false
-        let im = UIImage(named: "testing.jpg")
-        setImageFilters(im!)
         btnCompare.enabled = false
-        let tapRecognizer = UILongPressGestureRecognizer(target:self, action: Selector("toggleImage:"))
+        let tapRecognizer = UILongPressGestureRecognizer(target:self, action: #selector(ViewController.toggleImage(_:)))
         //Add the recognizer to your view.
         imageView.addGestureRecognizer(tapRecognizer)
+        setThumbnails()
+    }
+
+    // MARK: Share
+    @IBAction func onShare(sender: AnyObject) {
+        let activityController = UIActivityViewController(activityItems: ["Check out our really cool app", imageView.image!], applicationActivities: nil)
+        presentViewController(activityController, animated: true, completion: nil)
+    }
+    
+    func setThumbnails(){
         let aUIImage = imageView.image;
         let aCGImage = aUIImage?.CGImage;
         aCIImage = CIImage(CGImage: aCGImage!)
@@ -55,12 +61,33 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         contrastFilter.setValue(aCIImage, forKey: "inputImage")
         brightnessFilter = CIFilter(name: "CIColorControls");
         brightnessFilter.setValue(aCIImage, forKey: "inputImage")
-    }
-
-    // MARK: Share
-    @IBAction func onShare(sender: AnyObject) {
-        let activityController = UIActivityViewController(activityItems: ["Check out our really cool app", imageView.image!], applicationActivities: nil)
-        presentViewController(activityController, animated: true, completion: nil)
+        
+        let thumbNailWidth : CGFloat = 80
+        let thumbNailHeight : CGFloat = 80
+        let padding: CGFloat = 10
+        let contentSizeWidth:CGFloat = (thumbNailWidth + padding) * (CGFloat(filtersList.count))
+        let contentSize = CGSize(width: contentSizeWidth ,height: thumbNailHeight)
+        
+        scrollView.contentSize = contentSize
+        scrollView.autoresizingMask = UIViewAutoresizing.FlexibleWidth
+        for index in 0..<filtersList.count {
+            
+            //calculate x for uibutton
+            let xButton = CGFloat(padding * (CGFloat(index) + 1) + (CGFloat(index) * thumbNailWidth))
+            
+            let button:UIButton = UIButton(frame: CGRectMake(xButton,padding, thumbNailWidth, thumbNailHeight)
+            )
+            //tag for show image
+            button.tag = index
+            button.setTitle(filtersList[index], forState: .Normal)
+            
+            button.setImage(customFilter(filtersList [index], image: imageView.image!), forState: .Normal)
+            //selector when touch in side of button
+            button.addTarget(self, action: #selector(ViewController.changeFilter(_:)), forControlEvents: .TouchUpInside)
+            
+            scrollView.addSubview(button)
+        }
+        self.secondaryMenu.addSubview(scrollView)
     }
     
     // MARK: New Photo
@@ -100,21 +127,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         dismissViewControllerAnimated(true, completion: nil)
         if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
+            //self.scrollView.removeFromSuperview()
             imageView.image = image
-            setImageFilters(image)
             filterSelected = ""
             btnCompare.enabled = false
             originalImage = image
+            setThumbnails()
         }
-    }
-    
-    func setImageFilters(image: UIImage)
-    {        
-        btnFilter1.setImage(customFilter("CICMYKHalftone", image: imageView.image!), forState: .Normal)
-        btnFilter2.setImage(customFilter("CIPhotoEffectChrome", image: imageView.image!), forState: .Normal)
-        btnFilter3.setImage(customFilter("CIPhotoEffectFade", image: imageView.image!), forState: .Normal)
-        btnFilter4.setImage(customFilter("CIPhotoEffectTonal", image: imageView.image!), forState: .Normal)
-        btnFilter5.setImage(customFilter("CISepiaTone", image: imageView.image!), forState: .Normal)
     }
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
@@ -139,7 +158,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let leftConstraint = secondaryMenu.leftAnchor.constraintEqualToAnchor(view.leftAnchor)
         let rightConstraint = secondaryMenu.rightAnchor.constraintEqualToAnchor(view.rightAnchor)
         
-        let heightConstraint = secondaryMenu.heightAnchor.constraintEqualToConstant(44)
+        let heightConstraint = secondaryMenu.heightAnchor.constraintEqualToConstant(80)
         
         NSLayoutConstraint.activateConstraints([bottomConstraint, leftConstraint, rightConstraint, heightConstraint])
         
@@ -164,21 +183,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
   
     @IBAction func compareImage(sender: UIButton) {
         if sender.selected {
-            if filterSelected == btnFilter1.currentTitle {
-                imageView.image = btnFilter1.currentImage!
-            }
-            else if filterSelected == btnFilter2.currentTitle {
-                imageView.image = btnFilter2.currentImage!
-            }
-            else if filterSelected == btnFilter3.currentTitle {
-                imageView.image = btnFilter3.currentImage!
-            }
-            else if filterSelected == btnFilter4.currentTitle {
-                imageView.image = btnFilter4.currentImage!
-            }
-            else if filterSelected == btnFilter5.currentTitle {
-                imageView.image = btnFilter5.currentImage!
-            }
+            imageView.image = customFilter(filterSelected, image: originalImage!)
             sender.selected = false
         }
         else {
@@ -187,7 +192,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         }
     }
     
-    @IBAction func changeFilter(sender: UIButton) {
+    func changeFilter(sender: UIButton) {
         imageView.image = sender.currentImage
         filterSelected = sender.currentTitle!
         btnCompare.enabled = true
@@ -205,37 +210,24 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         //tappedImageView will be the image view that was tapped.
         //dismiss it, animate it off screen, whatever.
         //let tappedImageView = gestureRecognizer.view!
-        var currentImg = originalImage
+        
         if sender.state == .Ended{
-            UIView.animateWithDuration(0.8, animations: {
+            UIView.animateWithDuration(0.5, animations: {
                 self.imageView.alpha = 0.1
             })
-            if filterSelected == btnFilter1.currentTitle {
-                currentImg = btnFilter1.currentImage!
-            }
-            else if filterSelected == btnFilter2.currentTitle {
-                currentImg = btnFilter2.currentImage!
-            }
-            else if filterSelected == btnFilter3.currentTitle {
-                currentImg = btnFilter3.currentImage!
-            }
-            else if filterSelected == btnFilter4.currentTitle {
-                currentImg = btnFilter4.currentImage!
-            }
-            else if filterSelected == btnFilter5.currentTitle {
-                currentImg = btnFilter5.currentImage!
-            }
-            imageView.image  =  currentImg!
-            UIView.animateWithDuration(1, animations: {
+            
+            imageView.image = customFilter(filterSelected, image: originalImage!)
+            
+            UIView.animateWithDuration(0.5, animations: {
                 self.imageView.alpha = 1
             })
         }
         else if sender.state == .Began{
-            UIView.animateWithDuration(0.8, animations: {
+            UIView.animateWithDuration(0.5, animations: {
                 self.imageView.alpha = 0.1
             })
             imageView.image  =  self.originalImage
-            UIView.animateWithDuration(1, animations: {
+            UIView.animateWithDuration(0.5, animations: {
                 self.imageView.alpha = 1
             })
         }
