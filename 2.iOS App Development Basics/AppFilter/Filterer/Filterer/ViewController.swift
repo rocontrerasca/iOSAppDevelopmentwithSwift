@@ -47,7 +47,14 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let tapRecognizer = UILongPressGestureRecognizer(target:self, action: Selector("toggleImage:"))
         //Add the recognizer to your view.
         imageView.addGestureRecognizer(tapRecognizer)
-        
+        let aUIImage = imageView.image;
+        let aCGImage = aUIImage?.CGImage;
+        aCIImage = CIImage(CGImage: aCGImage!)
+        context = CIContext(options: nil);
+        contrastFilter = CIFilter(name: "CIColorControls");
+        contrastFilter.setValue(aCIImage, forKey: "inputImage")
+        brightnessFilter = CIFilter(name: "CIColorControls");
+        brightnessFilter.setValue(aCIImage, forKey: "inputImage")
     }
 
     // MARK: Share

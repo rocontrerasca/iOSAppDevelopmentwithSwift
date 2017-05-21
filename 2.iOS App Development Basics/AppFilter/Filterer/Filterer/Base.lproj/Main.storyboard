@@ -19,41 +19,56 @@
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CTs-HA-gES">
                                 <rect key="frame" x="0.0" y="20" width="600" height="126"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="FcE-MV-mSX">
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="ONT-k2-w2T">
                                         <rect key="frame" x="0.0" y="0.0" width="600" height="126"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="brightness" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R4x-yK-M8G">
-                                                <rect key="frame" x="0.0" y="0.0" width="600" height="30"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Dz9-vD-TXv">
-                                                <rect key="frame" x="-2" y="32" width="604" height="31"/>
-                                                <connections>
-                                                    <action selector="sliderBrightnessChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="vso-R9-R6x"/>
-                                                </connections>
-                                            </slider>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="contrast" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L14-al-Xf8">
-                                                <rect key="frame" x="0.0" y="64" width="600" height="30"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="9le-lS-GTh">
-                                                <rect key="frame" x="-2" y="96" width="604" height="31"/>
-                                                <connections>
-                                                    <action selector="sliderContrastChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="eZZ-mT-UJ7"/>
-                                                </connections>
-                                            </slider>
+                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="TbL-ju-vQm">
+                                                <rect key="frame" x="0.0" y="0.0" width="600" height="60"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="brightness" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R4x-yK-M8G">
+                                                        <rect key="frame" x="0.0" y="0.0" width="337" height="60"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="contrast" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L14-al-Xf8">
+                                                        <rect key="frame" x="337" y="0.0" width="263" height="60"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                </subviews>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="45" id="5NK-0C-BZX"/>
+                                                    <constraint firstAttribute="height" constant="60" id="hRK-iD-jXj"/>
+                                                </constraints>
+                                            </stackView>
+                                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="FcE-MV-mSX">
+                                                <rect key="frame" x="0.0" y="60" width="600" height="66"/>
+                                                <subviews>
+                                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Dz9-vD-TXv">
+                                                        <rect key="frame" x="-2" y="0.0" width="304" height="31"/>
+                                                        <connections>
+                                                            <action selector="sliderBrightnessChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="vso-R9-R6x"/>
+                                                        </connections>
+                                                    </slider>
+                                                    <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="9le-lS-GTh">
+                                                        <rect key="frame" x="298" y="0.0" width="304" height="31"/>
+                                                        <connections>
+                                                            <action selector="sliderContrastChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="eZZ-mT-UJ7"/>
+                                                        </connections>
+                                                    </slider>
+                                                </subviews>
+                                            </stackView>
                                         </subviews>
                                     </stackView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstItem="FcE-MV-mSX" firstAttribute="leading" secondItem="CTs-HA-gES" secondAttribute="leading" id="5yn-T5-7Aq"/>
-                                    <constraint firstItem="FcE-MV-mSX" firstAttribute="top" secondItem="CTs-HA-gES" secondAttribute="top" id="BdY-wM-OwG"/>
-                                    <constraint firstAttribute="trailing" secondItem="FcE-MV-mSX" secondAttribute="trailing" id="UI1-9c-Ytd"/>
+                                    <constraint firstItem="ONT-k2-w2T" firstAttribute="leading" secondItem="CTs-HA-gES" secondAttribute="leading" id="CWL-Gd-beQ"/>
+                                    <constraint firstAttribute="trailing" secondItem="ONT-k2-w2T" secondAttribute="trailing" id="fJ8-vA-STe"/>
+                                    <constraint firstItem="ONT-k2-w2T" firstAttribute="top" secondItem="CTs-HA-gES" secondAttribute="top" id="iHu-8c-mYj"/>
+                                    <constraint firstAttribute="bottom" secondItem="ONT-k2-w2T" secondAttribute="bottom" id="oGP-BA-KWq"/>
                                 </constraints>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JNF-wb-wwY">
