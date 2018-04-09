@@ -8,7 +8,7 @@
 
 import UIKit
 
-func changeRed(value: UInt8, image:UIImage) -> UIImage {
+func changeRed(_ value: UInt8, image:UIImage) -> UIImage {
     var img = RGBAImage(image: image)!
     for y in 0..<Int(image.size.height) {
         for x in 0..<Int(image.size.width) {
@@ -21,7 +21,7 @@ func changeRed(value: UInt8, image:UIImage) -> UIImage {
     return img.toUIImage()!
 }
 
-func changeGreen(value: UInt8, image:UIImage) -> UIImage {
+func changeGreen(_ value: UInt8, image:UIImage) -> UIImage {
     var img = RGBAImage(image: image)!
     for y in 0..<Int(image.size.height) {
         for x in 0..<Int(image.size.width) {
@@ -34,19 +34,19 @@ func changeGreen(value: UInt8, image:UIImage) -> UIImage {
     return img.toUIImage()!
 }
 
-func customFilter(filterName: String, image:UIImage) -> UIImage {
+func customFilter(_ filterName: String, image:UIImage) -> UIImage {
     let ciContext = CIContext(options: nil)
     let coreImage = CIImage(image: image)
     let filter = CIFilter(name: filterName )
     filter!.setDefaults()
     filter!.setValue(coreImage, forKey: kCIInputImageKey)
-    let filteredImageData = filter!.valueForKey(kCIOutputImageKey) as! CIImage
-    let filteredImageRef = ciContext.createCGImage(filteredImageData, fromRect: filteredImageData.extent)
-    let imageForButton = UIImage(CGImage: filteredImageRef);
+    let filteredImageData = filter!.value(forKey: kCIOutputImageKey) as! CIImage
+    let filteredImageRef = ciContext.createCGImage(filteredImageData, from: filteredImageData.extent)
+    let imageForButton = UIImage(cgImage: filteredImageRef!);
     return imageForButton
 }
 
-func changeBlue(value: UInt8, image:UIImage) -> UIImage {
+func changeBlue(_ value: UInt8, image:UIImage) -> UIImage {
     var img = RGBAImage(image: image)!
     for y in 0..<Int(image.size.height) {
         for x in 0..<Int(image.size.width) {
@@ -59,7 +59,7 @@ func changeBlue(value: UInt8, image:UIImage) -> UIImage {
     return img.toUIImage()!
 }
 
-func halfBrightness(image:UIImage) -> UIImage {
+func halfBrightness(_ image:UIImage) -> UIImage {
     var img = RGBAImage(image: image)!
     for y in 0..<Int(image.size.height) {
         for x in 0..<Int(image.size.width) {
@@ -74,7 +74,7 @@ func halfBrightness(image:UIImage) -> UIImage {
     return img.toUIImage()!
 }
 
-func doubleBrightness(image:UIImage) -> UIImage {
+func doubleBrightness(_ image:UIImage) -> UIImage {
     var img = RGBAImage(image: image)!
     for y in 0..<Int(image.size.height) {
         for x in 0..<Int(image.size.width){
