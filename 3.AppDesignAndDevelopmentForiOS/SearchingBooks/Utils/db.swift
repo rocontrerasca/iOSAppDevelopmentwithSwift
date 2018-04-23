@@ -143,6 +143,10 @@ public class db {
                 book.name = data.value(forKey: "name") as! String
                 book.isbn = data.value(forKey: "isbn") as! String
                 book.authors = data.value(forKey: "authors") as! String
+                 book.pages = data.value(forKey: "pages") as! String
+                 book.publishedDate = data.value(forKey: "publishedDate") as! String
+                 book.publisher = data.value(forKey: "publisher") as! String
+                 book.description = data.value(forKey: "review") as! String
                 let coverImg = data.value(forKey: "cover") as! NSData
                 if let cover = UIImage(data: coverImg as Data){
                     book.cover = cover

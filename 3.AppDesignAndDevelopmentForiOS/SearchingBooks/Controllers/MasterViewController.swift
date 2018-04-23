@@ -28,11 +28,13 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
         }
         
         historyBooks = db.getBooks()
+        tableView.reloadData()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         clearsSelectionOnViewWillAppear = splitViewController!.isCollapsed
         super.viewWillAppear(animated)
+        historyBooks = db.getBooks()
         tableView.reloadData()
     }
 
@@ -56,8 +58,8 @@ class MasterViewController: UITableViewController, NSFetchedResultsControllerDel
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showDetail" {
             if let indexPath = tableView.indexPathForSelectedRow {
-            let object = historyBooks[indexPath.row]
-                let controller = (segue.destination as! UINavigationController).topViewController as! AddBookController
+                let object = historyBooks[indexPath.row]
+                let controller = segue.destination as! AddBookController
                 controller.detailItem = object
                 controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true

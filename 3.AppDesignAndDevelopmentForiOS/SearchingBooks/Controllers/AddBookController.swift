@@ -9,6 +9,7 @@
 import UIKit
 
 class AddBookController: UIViewController {
+    var previousVC : MasterViewController = MasterViewController()
     
     @IBOutlet weak var lblBookTitle: UILabel!
     @IBOutlet weak var lblIsbn: UILabel!
@@ -26,13 +27,13 @@ class AddBookController: UIViewController {
     }
 
     @IBAction func addBook(_ sender: UIButton) {
-        if sender.titleLabel?.text == "Add to my list" {
-            sender.titleLabel?.text = "Remove from my list"
+        if btnAdd.titleLabel?.text == "Add to my list" {
+            btnAdd.setTitle("Remove from my list", for: .normal)
             db.addBook(bookItem: detailItem!)
             db.save()
         }
         else{
-            sender.titleLabel?.text = "Add to my list"
+             btnAdd.setTitle("Add to my list", for: .normal)
             var _ = db.deleteBook(isbn: (detailItem?.isbn)!)
             db.save()
         }
@@ -45,7 +46,7 @@ class AddBookController: UIViewController {
     func configureView() {
         
         if db.verifyBook(isbn: (detailItem?.isbn)!){
-            btnAdd.titleLabel?.text = "Remove from my list"
+           btnAdd.setTitle("Remove from my list", for: .normal)
         }
         
         lblBookTitle.text = detailItem?.name

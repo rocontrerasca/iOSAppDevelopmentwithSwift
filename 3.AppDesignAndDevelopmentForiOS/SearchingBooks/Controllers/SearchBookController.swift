@@ -20,7 +20,7 @@ class SearchBookController: UIViewController, UICollectionViewDataSource, UIColl
         sender.resignFirstResponder()
         let criteria = sender.text!.replacingOccurrences(of: "-", with: "").replacingOccurrences(of: ".", with: "").replacingOccurrences(of: " ", with: "+")
         
-        let urls: String = "https://www.googleapis.com/books/v1/volumes?q=" + criteria
+        let urls: String = "https://www.googleapis.com/books/v1/volumes?q=" + criteria.replacingOccurrences(of: "ñ", with: "n")
         
         //978-84-376-0494-7"
         
@@ -41,7 +41,9 @@ class SearchBookController: UIViewController, UICollectionViewDataSource, UIColl
                 do{
                     guard let json = try JSONSerialization.jsonObject(with: datos! as Data, options: [])
                         as? NSDictionary else {
-                            print("error trying to convert data to JSON")
+                            let alert = UIAlertController(title: "Alert", message: "Try again", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                            self.present(alert, animated: true, completion: nil)
                             return
                     }
                     
@@ -54,13 +56,13 @@ class SearchBookController: UIViewController, UICollectionViewDataSource, UIColl
                         
                         let volumeInfo = item["volumeInfo"] as! NSDictionary
                         let title = volumeInfo["title"] as! String
-                        let authorsArray = (volumeInfo["authors"]! as! NSArray).mutableCopy() as! NSMutableArray
+                        let authorsArray = (volumeInfo["authors"]! as? NSArray)?.mutableCopy() as! NSMutableArray
                         var authors = ""
                         
                         for author in authorsArray{
                             authors += author as! String
                         }
-                        let publisher = volumeInfo["publisher"] as! String
+                        let publisher = volumeInfo["publisher"] as? String
                         let publishedDate = volumeInfo["publishedDate"] as? String
                         let description = volumeInfo["description"] as? String
                         
@@ -80,42 +82,100 @@ class SearchBookController: UIViewController, UICollectionViewDataSource, UIColl
                         if(covers != nil){
                             let coverUrl = covers?["thumbnail"] as! NSString as String
                             
-                            let urlCover = NSURL(string: coverUrl)
+                            var firstTodoUrlRequest = URLRequest(url: URL(string: coverUrl)!)
+                            firstTodoUrlRequest.httpMethod = "GET"
                             
-                            let imgData : NSData? = NSData(contentsOf: urlCover! as URL)
-                            if(imgData != nil){
-                                if let image = UIImage(data : imgData! as Data){
+                            let session = URLSession.shared
+                            
+                            let task = session.dataTask(with: firstTodoUrlRequest) {
+                                (data, response, error) in
+                                guard let _ = data else {
+                                    print("error " + (error?.localizedDescription)!)
+                                    book.cover = #imageLiteral(resourceName: "imgNotAvailable")
+                                    book.name = title
+                                    book.authors = authors
+                                    if publisher != nil {
+                                        book.publisher = publisher!
+                                    }
+                                    
+                                    if publishedDate != nil {
+                                        book.publishedDate = publishedDate!
+                                    }
+                                    
+                                    if description != nil {
+                                        book.description = description!
+                                    }
+                                    
+                                    if pageCount != nil {
+                                        book.pages = pageCount!.description
+                                    }
+                                    book.isbn = isbn
+                                    
+                                    if book.isbn != "" && !db.verifyBook(isbn: book.isbn) {
+                                        self.search.books.append(book)
+                                        self.collectionView.reloadData()
+                                    }
+                                    return
+                                }
+                                
+                                if let image = UIImage(data : data! as Data){
                                     book.cover = image
+                                }else{
+                                    book.cover = #imageLiteral(resourceName: "imgNotAvailable")
+                                }
+                                
+                                book.name = title
+                                book.authors = authors
+                                if publisher != nil {
+                                    book.publisher = publisher!
+                                }
+                               
+                                if publishedDate != nil {
+                                    book.publishedDate = publishedDate!
+                                }
+                                
+                                if description != nil {
+                                    book.description = description!
+                                }
+                                
+                                if pageCount != nil {
+                                    book.pages = pageCount!.description
+                                }
+                                book.isbn = isbn
+                                
+                                if book.isbn != "" && !db.verifyBook(isbn: book.isbn) {
+                                    self.search.books.append(book)
+                                    self.collectionView.reloadData()
                                 }
                             }
-                            else{
-                                book.cover = #imageLiteral(resourceName: "imgNotAvailable")
-                            }
+                            task.resume()
                         }
                         else{
                             book.cover = #imageLiteral(resourceName: "imgNotAvailable")
-                        }
-                        book.name = title
-                        book.authors = authors
-                        book.publisher = publisher
-                        if publishedDate != nil {
-                             book.publishedDate = publishedDate!
-                        }
-                       
-                        if description != nil {
-                            book.description = description!
-                        }
-                        
-                        if pageCount != nil {
-                            book.pages = pageCount!.description
-                        }
-                        book.isbn = isbn
-                        
-                        if book.isbn != "" && !db.verifyBook(isbn: book.isbn) {
-                            search.books.append(book)
+                            book.name = title
+                            book.authors = authors
+                            if publisher != nil {
+                                book.publisher = publisher!
+                            }
+                            if publishedDate != nil {
+                                book.publishedDate = publishedDate!
+                            }
+                            
+                            if description != nil {
+                                book.description = description!
+                            }
+                            
+                            if pageCount != nil {
+                                book.pages = pageCount!.description
+                            }
+                            book.isbn = isbn
+                            
+                            if book.isbn != "" && !db.verifyBook(isbn: book.isbn) {
+                                search.books.append(book)
+                                collectionView.reloadData()
+                            }
                         }
                     }
-                    collectionView.reloadData()
                     divContainer.isHidden = false
                 }
                 catch {                    

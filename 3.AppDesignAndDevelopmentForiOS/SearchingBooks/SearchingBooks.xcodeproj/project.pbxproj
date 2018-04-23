@@ -82,7 +82,6 @@
 		E8F61C9F2073AF1A0021016C /* SearchingBooks */ = {
 			isa = PBXGroup;
 			children = (
-				E8F61CA02073AF1A0021016C /* AppDelegate.swift */,
 				E8F61CA92073AF1A0021016C /* Main.storyboard */,
 				E8F61CAC2073AF1A0021016C /* Assets.xcassets */,
 				E8F61CAE2073AF1A0021016C /* LaunchScreen.storyboard */,
@@ -98,6 +97,7 @@
 				E8F61CA52073AF1A0021016C /* MasterViewController.swift */,
 				E8F61CBD2073C0320021016C /* SearchBookController.swift */,
 				E88E4173208D33CE006BDFC1 /* AddBookController.swift */,
+				E8F61CA02073AF1A0021016C /* AppDelegate.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
