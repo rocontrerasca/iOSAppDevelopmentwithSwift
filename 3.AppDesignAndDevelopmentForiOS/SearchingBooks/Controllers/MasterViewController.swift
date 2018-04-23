@@ -11,8 +11,8 @@ import CoreData
 
 class MasterViewController: UITableViewController, NSFetchedResultsControllerDelegate {
 
-    var detailViewController: DetailViewController? = nil
-var managedObjectContext: NSManagedObjectContext? = nil
+    var detailViewController: AddBookController? = nil
+    var managedObjectContext: NSManagedObjectContext? = nil
     var historyBooks = [BookControl.Book]()
     
     override func viewDidLoad() {
@@ -24,7 +24,7 @@ var managedObjectContext: NSManagedObjectContext? = nil
        // navigationItem.rightBarButtonItem = addButton
         if let split = splitViewController {
             let controllers = split.viewControllers
-            detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
+            detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? AddBookController
         }
         
         historyBooks = db.getBooks()
@@ -57,16 +57,11 @@ var managedObjectContext: NSManagedObjectContext? = nil
         if segue.identifier == "showDetail" {
             if let indexPath = tableView.indexPathForSelectedRow {
             let object = historyBooks[indexPath.row]
-                let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
+                let controller = (segue.destination as! UINavigationController).topViewController as! AddBookController
                 controller.detailItem = object
                 controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true
             }
-        }
-        
-        if segue.identifier == "addBook" {
-            let controller = segue.destination as! AddBookController
-            controller.previousVC = self
         }
     }
 

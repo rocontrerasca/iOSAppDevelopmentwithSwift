@@ -169,6 +169,20 @@ public class db {
         book.setValue(UIImagePNGRepresentation(cover), forKey: "cover")
     }
     
+    static func addBook(bookItem: BookControl.Book) {
+        let bookEntity = NSEntityDescription.entity(forEntityName: "Book", in: self.context)!
+        let book = NSManagedObject(entity: bookEntity, insertInto: self.context)
+        
+        book.setValue(bookItem.name, forKey: "name")
+        book.setValue(bookItem.isbn, forKey: "isbn")
+        book.setValue(bookItem.authors, forKey: "authors")
+        book.setValue(bookItem.pages, forKey: "pages")
+        book.setValue(bookItem.publishedDate, forKey: "publishedDate")
+        book.setValue(bookItem.publisher, forKey: "publisher")
+        book.setValue(bookItem.description, forKey: "review")
+        book.setValue(UIImagePNGRepresentation(bookItem.cover!), forKey: "cover")
+    }
+    
     static func save(){
         do{
             try self.context.save()

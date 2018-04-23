@@ -18,6 +18,7 @@ class BookControl {
         var description: String
         var publisher: String
         var publishedDate: String
+        var pages: String
         
         init() {
             self.name = ""
@@ -27,6 +28,7 @@ class BookControl {
             self.description = ""
             self.publisher = ""
             self.publishedDate = ""
+            self.pages = ""
         }
         
         init(name:String, isbn:String, cover:UIImage?, authors:String) {
@@ -37,9 +39,10 @@ class BookControl {
             self.description = ""
             self.publisher = ""
             self.publishedDate = ""
+            self.pages = ""
         }
         
-        init(name:String, isbn:String, cover:UIImage?, authors:String, description: String, publisher: String, publishedDate: String) {
+        init(name:String, isbn:String, cover:UIImage?, authors:String, description: String, publisher: String, publishedDate: String, pages: String) {
             self.name = name
             self.isbn=isbn
             self.cover = cover
@@ -47,6 +50,7 @@ class BookControl {
             self.description = description
             self.publisher = publisher
             self.publishedDate = publishedDate
+            self.pages = pages
         }
     }    
 }
