@@ -8,6 +8,7 @@
 
 import UIKit
 private let reuseIdentifier = "resultCell"
+var spinner = Spinner()
 class SearchBookController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
         
     @IBOutlet weak var collectionView: UICollectionView!
@@ -15,6 +16,7 @@ class SearchBookController: UIViewController, UICollectionViewDataSource, UIColl
     var search : SearchControl.Search = SearchControl.Search()
     
     @IBAction func searchBook(_ sender: UITextField) {
+        spinner.showSpinner(message: "Searching", controller: self)
         search = SearchControl.Search()
         divContainer.isHidden = true
         sender.resignFirstResponder()
@@ -32,6 +34,7 @@ class SearchBookController: UIViewController, UICollectionViewDataSource, UIColl
             let dataString = String(data: datos! as Data, encoding: .utf8)
             print(dataString!)
             if (texto?.length)! <= 2 {
+                spinner.hiddenSpinner()
                 let message = "no results founds for: " + criteria
                 let alert = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
@@ -41,12 +44,12 @@ class SearchBookController: UIViewController, UICollectionViewDataSource, UIColl
                 do{
                     guard let json = try JSONSerialization.jsonObject(with: datos! as Data, options: [])
                         as? NSDictionary else {
+                            spinner.hiddenSpinner()
                             let alert = UIAlertController(title: "Alert", message: "Try again", preferredStyle: .alert)
                             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
                             self.present(alert, animated: true, completion: nil)
                             return
                     }
-                    
                     search.criteria = criteria.replacingOccurrences(of: "+", with: " ")
                     let items = json["items"] as! NSArray
                     
@@ -56,23 +59,27 @@ class SearchBookController: UIViewController, UICollectionViewDataSource, UIColl
                         
                         let volumeInfo = item["volumeInfo"] as! NSDictionary
                         let title = volumeInfo["title"] as! String
-                        let authorsArray = (volumeInfo["authors"]! as? NSArray)?.mutableCopy() as! NSMutableArray
+                        let authorsArray = volumeInfo["authors"] as? NSArray
                         var authors = ""
                         
-                        for author in authorsArray{
-                            authors += author as! String
+                        if authorsArray != nil{
+                            for author in authorsArray!{
+                                authors += author as! String
+                            }
                         }
                         let publisher = volumeInfo["publisher"] as? String
                         let publishedDate = volumeInfo["publishedDate"] as? String
                         let description = volumeInfo["description"] as? String
                         
-                        let industryIdentifiers = (volumeInfo["industryIdentifiers"]! as! NSArray).mutableCopy() as! NSMutableArray
+                        let industryIdentifiers = volumeInfo["industryIdentifiers"] as? NSArray
                         var isbn = ""
                         
-                        for identifierArray in industryIdentifiers{
-                            let identifier = identifierArray as! NSDictionary
-                            isbn = identifier["identifier"] as! String
-                            break
+                        if industryIdentifiers != nil{
+                            for identifierArray in industryIdentifiers!{
+                                let identifier = identifierArray as! NSDictionary
+                                isbn = identifier["identifier"] as! String
+                                break
+                            }
                         }
                         
                         let pageCount = volumeInfo["pageCount"] as? NSNumber
@@ -80,6 +87,7 @@ class SearchBookController: UIViewController, UICollectionViewDataSource, UIColl
                         let covers = volumeInfo["imageLinks"] as? NSDictionary
                         
                         if(covers != nil){
+                            
                             let coverUrl = covers?["thumbnail"] as! NSString as String
                             
                             var firstTodoUrlRequest = URLRequest(url: URL(string: coverUrl)!)
@@ -90,6 +98,7 @@ class SearchBookController: UIViewController, UICollectionViewDataSource, UIColl
                             let task = session.dataTask(with: firstTodoUrlRequest) {
                                 (data, response, error) in
                                 guard let _ = data else {
+                                    
                                     print("error " + (error?.localizedDescription)!)
                                     book.cover = #imageLiteral(resourceName: "imgNotAvailable")
                                     book.name = title
@@ -115,9 +124,9 @@ class SearchBookController: UIViewController, UICollectionViewDataSource, UIColl
                                         self.search.books.append(book)
                                         self.collectionView.reloadData()
                                     }
+                                    spinner.hiddenSpinner()
                                     return
                                 }
-                                
                                 if let image = UIImage(data : data! as Data){
                                     book.cover = image
                                 }else{
@@ -147,6 +156,7 @@ class SearchBookController: UIViewController, UICollectionViewDataSource, UIColl
                                     self.search.books.append(book)
                                     self.collectionView.reloadData()
                                 }
+                                spinner.hiddenSpinner()
                             }
                             task.resume()
                         }
@@ -174,14 +184,18 @@ class SearchBookController: UIViewController, UICollectionViewDataSource, UIColl
                                 search.books.append(book)
                                 collectionView.reloadData()
                             }
+                            spinner.hiddenSpinner()
                         }
                     }
+                    //spinner.hiddenSpinner()
                     divContainer.isHidden = false
                 }
-                catch {                    
+                catch {
+                    spinner.hiddenSpinner()
                 }
             }
         } else {
+            spinner.hiddenSpinner()
             let alert = UIAlertController(title: "Alert", message: "No connection", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
             self.present(alert, animated: true, completion: nil)

@@ -11,6 +11,8 @@ import UIKit
 class AddBookController: UIViewController {
     var previousVC : MasterViewController = MasterViewController()
     
+    
+    @IBOutlet weak var viewContentHeight: NSLayoutConstraint!
     @IBOutlet weak var lblBookTitle: UILabel!
     @IBOutlet weak var lblIsbn: UILabel!
     @IBOutlet weak var lblAuthors: UILabel!
@@ -57,6 +59,13 @@ class AddBookController: UIViewController {
         lblPages.text = detailItem?.pages
         bookCover.image = detailItem?.cover
         lblDescription.text = detailItem?.description
+
+        let greet4Height = lblDescription.optimalHeight
+        lblDescription.frame = CGRect(x: lblDescription.frame.origin.x, y: lblDescription.frame.origin.y, width: lblDescription.frame.width, height: greet4Height)
+        lblDescription.backgroundColor = UIColor.yellow
+        
+        viewContentHeight.constant += greet4Height
+        self.view.layoutIfNeeded()
     }
 
     var detailItem: BookControl.Book? {
